@@ -1,0 +1,236 @@
+@import "tailwindcss";
+
+/* light: — стиль только в светлой теме. Нужен там, где токена мало: знак в
+   шапке — две разные картинки, а не один цвет. Всё, что можно выразить
+   цветом, — токеном ниже, а не этим вариантом. */
+@custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
+
+/* ============================================================
+   Токены Step Up
+   Значения акцента и фона сняты пипеткой с docs/logo_step_up.png.
+   Дефолтная палитра Tailwind намеренно не используется — она даёт
+   узнаваемый вид «сайта с шаблона».
+   ============================================================ */
+
+@theme {
+  /* --- Акцент. Оранжевый из логотипа — для тёмной темы.
+         У светлой свой, синий: это второй вариант знака клуба (аватарка,
+         флаг), и он нарисован под светлый фон, как оранжевый — под тёмный.
+         Переопределяется в [data-theme="light"] ниже; утилиты читают
+         переменные, так что поменять шкалу — значит поменять её там. --- */
+  --color-accent-50: #fff4ec;
+  --color-accent-100: #ffe3d0;
+  --color-accent-200: #ffc3a0;
+  --color-accent-300: #eaa063; /* текст логотипа */
+  --color-accent-400: #ff7d3a;
+  --color-accent-500: #fd5e0a; /* основной акцент, склон горы */
+  --color-accent-600: #e04a05;
+  --color-accent-700: #b83905;
+  --color-accent-800: #8f2d08;
+  --color-accent-900: #6b240a;
+
+  /* --- Градиент логотипа. Только для декора: герой, логотип, разделители.
+         В качестве цвета элементов интерфейса не использовать —
+         красный и жёлтый заняты состояниями. --- */
+  --color-brand-red: #cc021c;
+  --color-brand-orange: #fd5e0a;
+  --color-brand-yellow: #fff579;
+
+  /* --- Нейтральные. Тёплые, не чистый чёрный: #000 даёт слишком жёсткий
+         контраст с фотографиями гор. --- */
+  --color-ink-50: #f7f5f5;
+  --color-ink-100: #e8e4e5;
+  --color-ink-200: #cdc7c8;
+  --color-ink-300: #aaa1a3;
+  --color-ink-400: #857a7d;
+  --color-ink-500: #5c5154;
+  --color-ink-600: #3d3538;
+  --color-ink-700: #2a2426;
+  --color-ink-750: #231e1f;
+  --color-ink-800: #1c1819;
+  --color-ink-850: #181415; /* подложка карточки */
+  --color-ink-900: #131011;
+  --color-ink-950: #0b090a; /* фон логотипа */
+
+  /* --- Категории сложности 1–5. Своя шкала, от спокойного к насыщенному.
+         Намеренно холодная: красный, зелёный и жёлтый заняты состояниями,
+         а красная «пятёрка» читалась бы как ошибка. --- */
+  --color-cat-1: #8fb8cf;
+  --color-cat-2: #7c9bd4;
+  --color-cat-3: #7e7fd1;
+  --color-cat-4: #8e63c4;
+  --color-cat-5: #9b45a8;
+
+  /* --- Состояния. --- */
+  --color-success: #3fb950;
+  --color-warning: #d29922;
+  --color-danger: #e5484d;
+
+  /* --- Типографика. Оба шрифта обязаны поддерживать кириллицу. --- */
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-unbounded), var(--font-manrope), sans-serif;
+
+  /* --- Минимальная высота кликабельного элемента на телефоне. --- */
+  --spacing-tap: 2.75rem; /* 44px */
+
+  /* --- Полоска перехода между страницами.
+         Растёт быстро в начале и почти останавливается к концу: до края она
+         не доходит никогда, потому что честного прогресса у нас нет — есть
+         только «идёт». Дойди она до конца раньше страницы, это было бы
+         враньём, за которым следует пустое ожидание. --- */
+  --animate-nav-progress: nav-progress 4s cubic-bezier(0.15, 0.85, 0.25, 1)
+    forwards;
+}
+
+@keyframes nav-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(0.9);
+  }
+}
+
+/* --- Семантические цвета. Тема переключает их, а в светлой ещё и шкалы
+       акцента, категорий и состояний — см. [data-theme="light"]. --- */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  /* Тише fg-muted: плейсхолдер, подпись в подвале. */
+  --color-fg-subtle: var(--fg-subtle);
+  /* Между bg и surface: дорожка полоски прогресса, закрытая строка списка. */
+  --color-surface-muted: var(--surface-muted);
+  --color-line: var(--line);
+  /* Текст на акцентной заливке. Переменной, как остальные семантические: в
+     @theme inline значение подставляется в утилиту напрямую, и заданный тут
+     ink-950 нельзя было бы переопределить темой — а у синего акцента текст
+     на кнопке белый. Проверено на странице образцов, 15 сентября 2026. */
+  --color-on-accent: var(--on-accent);
+  /* Кнопка входа через Google. Цвета не наши, а из фирменных правил Google —
+     у них отдельные пары для тёмной и светлой темы. */
+  /* Рамка и подложка плашки состояния. Прозрачность — переменной темы: на
+     тёмном 40% рамки и никакой заливки (полупрозрачный жёлтый там давал
+     бурую муть), а на белом те же 40% жёлтого почти не видно — плашка
+     «профиль не заполнен» терялась (скриншот автора, 15 сентября 2026). */
+  --color-warning-line: color-mix(in oklab, var(--color-warning) var(--tone-line), transparent);
+  --color-danger-line: color-mix(in oklab, var(--color-danger) var(--tone-line), transparent);
+  --color-success-line: color-mix(in oklab, var(--color-success) var(--tone-line), transparent);
+  --color-accent-line: color-mix(in oklab, var(--color-accent-500) var(--tone-line), transparent);
+  --color-warning-tint: color-mix(in oklab, var(--color-warning) var(--tone-tint), var(--surface));
+  --color-danger-tint: color-mix(in oklab, var(--color-danger) var(--tone-tint), var(--surface));
+  --color-success-tint: color-mix(in oklab, var(--color-success) var(--tone-tint), var(--surface));
+  --color-accent-tint: color-mix(in oklab, var(--color-accent-500) var(--tone-tint), var(--surface));
+  --color-google-bg: var(--google-bg);
+  --color-google-fg: var(--google-fg);
+  --color-google-border: var(--google-border);
+}
+
+/* Тёмная тема — основная: фотографии гор на тёмном выглядят лучше,
+   и оранжевый логотип спроектирован под неё. */
+:root {
+  --bg: var(--color-ink-950);
+  /* Карточка на ступень светлее, чем была: на ink-900 по ink-950 границу
+     блока держала только тонкая рамка, и глаз не видел, где кончается одна
+     карточка и начинается другая. Рамку с карточек сняли 14 сентября 2026. */
+  --surface: var(--color-ink-850);
+  --surface-raised: var(--color-ink-750);
+  --fg: var(--color-ink-50);
+  --fg-muted: var(--color-ink-300);
+  --fg-subtle: var(--color-ink-500);
+  --surface-muted: var(--color-ink-800);
+  --on-accent: var(--color-ink-950);
+  --line: var(--color-ink-700);
+  --tone-line: 40%;
+  --tone-tint: 0%;
+  --google-bg: #131314;
+  --google-fg: #e3e3e3;
+  --google-border: #8e918f;
+}
+
+[data-theme="light"] {
+  --bg: var(--color-ink-50);
+  --surface: #ffffff;
+  --surface-raised: var(--color-ink-100);
+  --fg: var(--color-ink-950);
+  --fg-muted: var(--color-ink-500);
+  --fg-subtle: var(--color-ink-400);
+  --surface-muted: var(--color-ink-100);
+  --line: var(--color-ink-200);
+  --tone-line: 75%;
+  --tone-tint: 7%;
+  --google-bg: #ffffff;
+  --google-fg: #1f1f1f;
+  --google-border: #747775;
+
+  /* Синий акцент — цвета сняты с градиентов синего знака (решение автора по
+     странице образцов, 15 сентября 2026). Кнопка — 500, белый текст на нём
+     7,3:1; наведение — 400, 4,9:1: оба годятся и для текста ссылок. Голубой
+     край горы на белом сливается (1,6:1) и в интерфейс не идёт. */
+  --color-accent-50: #eef6fb;
+  --color-accent-100: #d6eaf5;
+  --color-accent-200: #a9d3ea;
+  --color-accent-300: #6fb6db;
+  --color-accent-400: #1078aa;
+  --color-accent-500: #105a8c;
+  --color-accent-600: #0e4a78;
+  --color-accent-700: #0e3c66;
+  --color-accent-800: #0e3160;
+  --color-accent-900: #0e2854;
+  --on-accent: #ffffff;
+
+  /* Шкала категорий — тёплая: холодная упёрлась бы в синий акцент. От
+     персикового к кирпичному, в чистый красный не уходит — красным помечены
+     ошибки и «Отменён», которые стоят в той же карточке. */
+  --color-cat-1: #f5b971;
+  --color-cat-2: #f0913f;
+  --color-cat-3: #e0651f;
+  --color-cat-4: #c2410c;
+  --color-cat-5: #8c2a0e;
+
+  /* Состояния темнее: значения тёмной темы на белом дают 2,3:1 у зелёного и
+     жёлтого — «Пришёл» и «Ждёт ответа» текстом не читались бы. Здесь все
+     три около 5:1. */
+  --color-success: #1a7f37;
+  --color-warning: #9a6700;
+  --color-danger: #cf222e;
+}
+
+@layer base {
+  html {
+    background-color: var(--bg);
+    color-scheme: dark;
+  }
+
+  [data-theme="light"] {
+    color-scheme: light;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Широкий шрифт — только у заголовка страницы. До 14 сентября 2026 Unbounded
+     стоял на h1–h3, и на телефоне короткие заголовки секций («Правила и
+     безопасность», «Ведут — 4») уходили в две строки и кричали там, где
+     нужно подписать блок. Где широкий шрифт нужен сверх h1 — лендинг,
+     крупные цифры, — font-display ставится явно. */
+  h1 {
+    font-family: var(--font-display);
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  h2,
+  h3 {
+    letter-spacing: -0.01em;
+  }
+}
